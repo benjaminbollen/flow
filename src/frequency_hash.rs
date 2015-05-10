@@ -21,7 +21,7 @@ pub struct HashFrequency<K: Hash + Eq + Clone> {
     map: HashMap<K, usize>
 }
 
-impl<Key: Ord + Clone, Value: Eq + Clone> FrequencyMap<Key> {
+impl<Key: Ord + Clone, Value: Eq + Clone> HashFrequency<Key> {
     pub fn new() -> Frequency<Key> {
         Frequency {
             map: HashMap::<Key, usize>::new()
