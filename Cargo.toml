@@ -1,4 +1,13 @@
 [package]
 name = "flow"
 version = "0.1.0"
-authors = ["Benjamin Bollen <benjamin.bollen@maidsafe.net>"]
+authors = ["MaidSafe Developers <dev@maidsafe.net>"]
+description = "Streaming statistics package"
+documentation = "http://benjaminbollen.github.io/flow/"
+repository = "https://github.com/benjaminbollen/flow"
+readme = "README.md"
+license = "GPL-3.0"
+homepage = "http://maidsafe.net"
+
+[dependencies]
+rand = "*"
