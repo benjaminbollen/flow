@@ -15,19 +15,16 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-use std::collections::BTreeMap;
-use std::collections::Hashmap;
+use std::collections::HashMap;
 
-pub struct FrequencyMap<K: Ord + Clone, V: Eq + Clone> {
-    map: BTreeMap<K, usize>,
-    value_map: HashMap<K, V>
+pub struct HashFrequency<K: Hash + Eq + Clone> {
+    map: HashMap<K, usize>
 }
 
-impl<Key: Ord + Clone, Value: Eq + Clone> FrequencyMap<Key, Value> {
+impl<Key: Ord + Clone, Value: Eq + Clone> FrequencyMap<Key> {
     pub fn new() -> Frequency<Key> {
         Frequency {
-            map: BTreeMap::<Key, usize>::new()
-            value_map: HashMap::<Key, Value>::new()
+            map: HashMap::<Key, usize>::new()
         }
     }
 
