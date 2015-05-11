@@ -15,31 +15,35 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-use std::collections::HashMap;
-
-pub struct HashFrequency<K: Hash + Eq + Clone> {
-    map: HashMap<K, usize>
+pub struct FrequencyHash<Key: PartialEq + Eq + Clone> {
+    map: Vec<(Key, usize)>
 }
 
-impl<Key: Ord + Clone, Value: Eq + Clone> HashFrequency<Key> {
-    pub fn new() -> Frequency<Key> {
-        Frequency {
-            map: HashMap::<Key, usize>::new()
+impl<Key: PartialEq + Eq + Clone> FrequencyHash<Key> {
+    pub fn new() -> FrequencyHash<Key> {
+        FrequencyHash {
+            map: Vec::<(Key, usize)>::new()
         }
     }
 
-    pub fn update(&mut self, key: Key) {
-        *self.map.entry(key).or_insert(0) += 1;
+    pub fn update(&mut self, key: &Key) {
+        let mut fresh_key : bool = true;
+        for stored_key in self.map.iter_mut() {
+            if &stored_key.0 == key {
+                stored_key.1 += 1;
+                fresh_key = false;
+                break;
+            }
+        }
+        if fresh_key {
+            self.map.push((key.clone(), 1));
+        }
+
     }
 
-    pub fn sort_by_highest(&self) -> Vec<(Key, usize)> {
-        let mut kvs = self.to_vector();
-        kvs.sort_by(|a,b| b.1.cmp(&a.1));
-        kvs
-    }
-
-    fn to_vector(&self) -> Vec<(Key, usize)> {
-        self.map.iter().map(|(k,v)| (k.clone(), v.clone())).collect::<Vec<_>>()
+    pub fn sort_by_highest(&mut self) -> Vec<(Key, usize)> {
+        self.map.sort_by(|a,b| b.1.cmp(&a.1));
+        self.map.clone()
     }
 }
 
@@ -70,10 +74,10 @@ mod test {
 
         // shuffle duplicated keys
         rng.shuffle(&mut all_counts[..]);
-        let mut freq = Frequency::new();
+        let mut freq = FrequencyHash::new();
         for occurance in all_counts {
             // and register each key multiple times in random order
-            freq.update(occurance);
+            freq.update(&occurance);
         };
         // sort the counts
         let ordered_counts = freq.sort_by_highest();
@@ -84,8 +88,7 @@ mod test {
             let y : f64 = 30f64 * (- (fx.powi(2i32) / 100000f64)).exp();
             let count : usize = y.trunc() as usize + 1;
             // because we started with random keys whos occurance monotonically decreased
-            // for increasing key, the keys should now increase, as the count increases.
-            assert!(value.0 >= min_x);
+            // for increasing key, the keys should now increase, as the count decreases.
             assert_eq!(value.1, count);
             assert!(value.1 <= max_count);
             min_x = value.0.clone();
