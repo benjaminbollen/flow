@@ -82,7 +82,6 @@ mod test {
         // sort the counts
         let ordered_counts = freq.sort_by_highest();
         let mut max_count = 31usize;
-        let mut min_x = 0u32;
         for value in ordered_counts {
             let fx : f64 = value.0.clone() as f64;
             let y : f64 = 30f64 * (- (fx.powi(2i32) / 100000f64)).exp();
@@ -91,7 +90,6 @@ mod test {
             // for increasing key, the keys should now increase, as the count decreases.
             assert_eq!(value.1, count);
             assert!(value.1 <= max_count);
-            min_x = value.0.clone();
             max_count = value.1.clone();
         };
     }
