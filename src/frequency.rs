@@ -15,13 +15,13 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-pub struct FrequencyHash<Key: PartialEq + Eq + Clone> {
+pub struct Frequency<Key: PartialEq + Eq + Clone> {
     map: Vec<(Key, usize)>
 }
 
-impl<Key: PartialEq + Eq + Clone> FrequencyHash<Key> {
-    pub fn new() -> FrequencyHash<Key> {
-        FrequencyHash {
+impl<Key: PartialEq + Eq + Clone> Frequency<Key> {
+    pub fn new() -> Frequency<Key> {
+        Frequency {
             map: Vec::<(Key, usize)>::new()
         }
     }
@@ -74,7 +74,7 @@ mod test {
 
         // shuffle duplicated keys
         rng.shuffle(&mut all_counts[..]);
-        let mut freq = FrequencyHash::new();
+        let mut freq = Frequency::new();
         for occurance in all_counts {
             // and register each key multiple times in random order
             freq.update(&occurance);
