@@ -15,34 +15,50 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
+use std::cmp::max;
+
 pub struct FrequencyDedup<Key: PartialEq + Eq + Clone, Value: PartialEq + Eq + Clone> {
-    map: Vec<(Key, Value, usize)>
+    map: Vec<(Key, Vec<(Value, usize)>, usize)>
 }
 
 impl<Key: PartialEq + Eq + Clone, Value: PartialEq + Eq + Clone>
     FrequencyDedup<Key, Value> {
     pub fn new() -> FrequencyDedup<Key, Value> {
         FrequencyDedup {
-            map: Vec::<(Key, Value, usize)>::new()
+            map: Vec::<(Key, Vec<(Value, usize)>, usize)>::new()
         }
     }
 
     pub fn update(&mut self, key: &Key, value: &Value) {
         let mut fresh_key : bool = true;
+        let mut fresh_value : bool = true;
         for stored_key in self.map.iter_mut() {
             if &stored_key.0 == key {
-                stored_key.2 += 1;
+                for stored_value in stored_key.1.iter_mut() {
+                    if &stored_value.0 == value {
+                        stored_value.1 += 1;
+                        stored_key.2 = max(stored_key.2, stored_value.1);
+                        fresh_value = false;
+                        break;
+                    }
+                }
+                if fresh_value {
+                    stored_key.1.push((value.clone(), 1));
+                }
                 fresh_key = false;
                 break;
             }
         }
         if fresh_key {
-            self.map.push((key.clone(), value.clone(), 1));
+            self.map.push((key.clone(), vec![(value.clone(), 1)], 1));
         }
     }
 
-    pub fn sort_by_highest(&mut self) -> Vec<(Key, Value, usize)> {
-        self.map.sort_by(|a,b| b.2.cmp(&a.2));
+    /// This returns every unique Key,
+    /// with a Vec of all the corresponding values encountered, their respecitive count each,
+    /// and the maximum count encountered for that key over all values.
+    pub fn sort_by_highest(&mut self) -> Vec<(Key, Vec<(Value, usize)>, usize)> {
+        self.map.sort_by(|a, b| b.2.cmp(&a.2));
         self.map.clone()
     }
 }
