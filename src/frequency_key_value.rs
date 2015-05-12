@@ -17,14 +17,14 @@
 
 use std::cmp::max;
 
-pub struct FrequencyDedup<Key: PartialEq + Eq + Clone, Value: PartialEq + Eq + Clone> {
+pub struct FrequencyKeyValue<Key: PartialEq + Eq + Clone, Value: PartialEq + Eq + Clone> {
     map: Vec<(Key, Vec<(Value, usize)>, usize)>
 }
 
 impl<Key: PartialEq + Eq + Clone, Value: PartialEq + Eq + Clone>
-    FrequencyDedup<Key, Value> {
-    pub fn new() -> FrequencyDedup<Key, Value> {
-        FrequencyDedup {
+    FrequencyKeyValue<Key, Value> {
+    pub fn new() -> FrequencyKeyValue<Key, Value> {
+        FrequencyKeyValue {
             map: Vec::<(Key, Vec<(Value, usize)>, usize)>::new()
         }
     }
@@ -90,7 +90,7 @@ mod test {
 
         // shuffle duplicated keys
         rng.shuffle(&mut all_counts[..]);
-        let mut freq = FrequencyDedup::new();
+        let mut freq = FrequencyKeyValue::new();
         for occurance in all_counts {
             // and register each key multiple times in random order
             freq.update(&occurance, &occurance);

@@ -18,4 +18,4 @@
 extern crate rand;
 
 pub mod frequency;
-pub mod frequency_dedup;
+pub mod frequency_key_value;
